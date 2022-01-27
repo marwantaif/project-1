@@ -1,6 +1,6 @@
 ##App Odoo Customize(Debranding Title,Language,Documentation,Quick Debug,Quick Data Clear)
 ============
-White label odoo change. 
+White label odoo change okay. 
 Support Odoo 13,12, 11, 10, 9. Including communicate and enterprise version.
 You can config odoo, make it look like your own platform.
 1. Deletes Odoo label in footer
