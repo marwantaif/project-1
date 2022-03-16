@@ -5,7 +5,7 @@ from odoo import api, fields, models
 class ProductSupplierInfo(models.Model):
     _inherit = "product.supplierinfo"
 
-    discount = fields.Float(string="Discount (%)", digits="Discount")
+    discount = fields.Float(string="Discount", digits="Discount")
 
     @api.onchange("name")
     def onchange_name(self):

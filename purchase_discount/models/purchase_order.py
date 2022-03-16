@@ -31,15 +31,15 @@ class PurchaseOrderLine(models.Model):
         vals.update({"price_unit": self._get_discounted_price_unit()})
         return vals
 
-    discount = fields.Float(string="Discount (%)", digits="Discount")
+    discount = fields.Float(string="Discount", digits="Discount")
 
-    _sql_constraints = [
-        (
-            "discount_limit",
-            "CHECK (discount <= 100.0)",
-            "Discount must be lower than 100%.",
-        )
-    ]
+    # _sql_constraints = [
+    #     (
+    #         "discount_limit",
+    #         "CHECK (discount <= 100.0)",
+    #         "Discount must be lower than 100%.",
+    #     )
+    # ]
 
     def _get_discounted_price_unit(self):
         """Inheritable method for getting the unit price after applying
@@ -50,7 +50,9 @@ class PurchaseOrderLine(models.Model):
         """
         self.ensure_one()
         if self.discount:
-            return self.price_unit * (1 - self.discount / 100)
+            total_price = (self.price_unit * self.product_qty) - self.discount
+            # return self.price_unit * (1 - self.discount / 100)
+            return total_price / self.product_qty
         return self.price_unit
 
     def _get_stock_move_price_unit(self):
