@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="account_voucher_report">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-set="lang" t-value="user.partner_id.lang or o.employee_id.user_id.partner_id.lang"/>
+                    <t t-call="web.internal_layout">
+                        <div class="page" style="font-family: Amiri;">
+                            <center><h3 >
+                                <b><u>Accounting Voucher: </u></b></h3>
+                                <p t-esc="o.name"/>
+                            </center>
+                            <div class="oe_structure"/>
+                            <div class="row " >
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><b>Journal:</b></td>
+                                        <td><span t-esc="o.journal_id.name"/> </td>
+                                        <td width="20%"/>
+                                        <td><b>Date:</b></td>
+                                        <td><span t-esc="o.date"/> </td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Account:</b></td>
+                                        <td><span t-esc="o.account_id.name"/> </td>
+                                        <td width="20%"/>
+                                        <td><b t-if="o.move_id">Entry:</b></td>
+                                        <td><span t-if="o.move_id" t-esc="o.move_id.display_name"/> </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="oe_structure"/>
+                            <t t-if="o.voucher_line_ids">
+                                <br/>
+                                <br/>
+                                <table class="table table-condensed table-border table-striped">
+                                    <thead>
+                                        <tr class="table-active text-center">
+                                            <th style="border: 1px solid black">Type</th>
+                                            <th style="border: 1px solid black">Account</th>
+                                            <th style="border: 1px solid black">Partner Type</th>
+                                            <th style="border: 1px solid black">Partner</th>
+                                            <th style="border: 1px solid black">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="o.voucher_line_ids" t-as="type">
+                                            <tr class="text-center">
+                                                <td style="border: 1px solid black">
+                                                    <span t-if="type.account_voucher_type_id" t-esc="type.account_voucher_type_id.name"/>
+                                                </td>
+                                                <td style="border: 1px solid black">
+                                                    <span t-if="type.account_id" t-esc="type.account_id.name"/>
+                                                </td>
+                                                <td style="border: 1px solid black">
+                                                    <span t-esc="type.partner_type"/>
+                                                </td>
+                                                <td style="border: 1px solid black">
+                                                    <span t-if="type.partner_id" t-esc="type.partner_id.name"/>
+                                                </td>
+                                                <td style="border: 1px solid black"><span t-field="type.amount" widget="monetary"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                    <tfooter>
+                                        <tr class="table-active">
+                                            <th style="border: 1px solid black" colspan="4"><h5>Total:</h5></th>
+                                            <th style="border: 1px solid black" class="text-center">
+                                                <h5 t-field="o.amount_total" widget="Monetary"/>
+                                            </th>
+                                        </tr>
+                                    </tfooter>
+                                </table>
+                            </t>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
