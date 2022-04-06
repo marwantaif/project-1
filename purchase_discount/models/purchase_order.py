@@ -31,7 +31,33 @@ class PurchaseOrderLine(models.Model):
         vals.update({"price_unit": self._get_discounted_price_unit()})
         return vals
 
-    discount = fields.Float(string="Discount", digits="Discount")
+    fixed_discount = fields.Float(string="Fixed Disc.", digits="Product Price", default=0.000)
+
+    discount = fields.Float(string='% Disc.', digits='Discount', default=0.000)
+
+    @api.onchange("discount")
+    def _onchange_discount(self):
+        for line in self:
+            if line.discount != 0:
+                self.fixed_discount = 0.0
+                fixed_discount = (line.price_unit * line.product_qty) * (line.discount / 100.0)
+                line.update({"fixed_discount": fixed_discount})
+            if line.discount == 0:
+                fixed_discount = 0.000
+                line.update({"fixed_discount": fixed_discount})
+
+    @api.onchange("fixed_discount")
+    def _onchange_fixed_discount(self):
+        for line in self:
+            if line.fixed_discount != 0:
+                self.discount = 0.0
+                discount = ((self.product_qty * self.price_unit) - (
+                            (self.product_qty * self.price_unit) - self.fixed_discount)) / (
+                                       self.product_qty * self.price_unit) * 100 or 0.0
+                line.update({"discount": discount})
+            if line.fixed_discount == 0:
+                discount = 0.0
+                line.update({"discount": discount})
 
     # _sql_constraints = [
     #     (
@@ -50,9 +76,13 @@ class PurchaseOrderLine(models.Model):
         """
         self.ensure_one()
         if self.discount:
-            total_price = (self.price_unit * self.product_qty) - self.discount
-            # return self.price_unit * (1 - self.discount / 100)
-            return total_price / self.product_qty
+            # total_price = (self.price_unit * self.product_qty) - self.discount
+            # discount = ((self.product_qty * self.price_unit) - (
+            #             (self.product_qty * self.price_unit) - self.discount)) / (
+            #                        self.product_qty * self.price_unit) * 100 or 0.0
+            # price = self.price_unit * (1 - discount / 100)
+            return self.price_unit * (1 - self.discount / 100)
+            # return total_price / self.product_qty
         return self.price_unit
 
     def _get_stock_move_price_unit(self):
