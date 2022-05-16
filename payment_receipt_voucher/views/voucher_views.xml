@@ -32,7 +32,7 @@
                             <group>
                                 <!--                                <field name="active" invisible="1"/>-->
                                 <field name="journal_id" options="{'no_create': True, 'no_quick_create': True}"/>
-                                <field name="account_id" options="{'no_create': True, 'no_quick_create': True}"/>
+                                <field name="account_id"  options="{'no_create': True, 'no_quick_create': True}"/>
                                 <field name="tax_id" options="{'no_create': True, 'no_quick_create': True}"/>
                                 <field name="description"/>
                             </group>
@@ -56,6 +56,8 @@
                                         <field name="account_id" optional="show" force_save="1"/>
                                         <field name="analytic_account_id" optional="show" force_save="1"/>
                                         <field name="description" optional="show" force_save="1"/>
+                                        <field name="voucher_number" optional="show" force_save="1"/>
+                                        <field name="voucher_date" optional="show" force_save="1"/>
                                         <field name="partner_type" readonly="1" optional="show" force_save="1"/>
                                         <field name="partner_id" attrs="{'readonly':[('partner_type','=',('no_partner'))],
                                                                                 'required':[('partner_type', 'in', ('customer_rank', 'supplier_rank', 'employee'))]}"

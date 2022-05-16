@@ -41,7 +41,7 @@ class AccountVoucher(models.Model):
     journal_id = fields.Many2one('account.journal', "Journal", check_company=True, readonly=True, required=True,
                                  states={'draft': [('readonly', False)]}, tracking=True,
                                  domain=[('type', 'in', ['cash', 'bank'])])
-    account_id = fields.Many2one(related='journal_id.default_account_id', readonly=True)
+    account_id = fields.Many2one('account.account', related='journal_id.default_account_id', store=True, readonly=True)
     move_id = fields.Many2one('account.move', "Journal Entry")
     amount_tax = fields.Monetary(string='Tax', store=True, readonly=True,
                                  compute='_compute_amount')
@@ -188,6 +188,8 @@ class AccountVoucherLine(models.Model):
                                           check_company=True)
     tax_id = fields.Many2one('account.tax', domain=account_voucher_type_domains, check_company=True)
     tax_number = fields.Char(string="Tax ID")
+    voucher_number = fields.Char('Voucher Number')
+    voucher_date = fields.Date('Voucher Date')
 
     def _get_account_move_line_values(self):
         move_line_values = []
