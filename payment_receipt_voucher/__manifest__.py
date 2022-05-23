@@ -22,7 +22,7 @@
 
     # always loaded
     'data': [
-
+        'security/voucher_security.xml',
         'data/data.xml',
         'security/ir.model.access.csv',
         'reports/reports.xml',

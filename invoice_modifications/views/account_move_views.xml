@@ -9,6 +9,9 @@
                     <field name='invoice_number' optional='show'/>
                     <field name='invoice_date' optional='show'/>
                 </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//field[@name='price_subtotal']" position="after">
+                    <field name='price_subtotal_tax' optional='show'/>
+                </xpath>
             </field>
         </record>
     </data>

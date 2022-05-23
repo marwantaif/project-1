@@ -9,6 +9,7 @@ class AccountVoucher(models.Model):
     _name = 'account.voucher'
     _description = 'Accounting Voucher'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _check_company_auto = True
 
     def account_voucher_tax_domain(self):
         tax_domain = []
@@ -76,14 +77,15 @@ class AccountVoucher(models.Model):
     def action_post(self):
         move_obj = self.env['account.move']
         for voucher in self:
-            move_vals = self._prepare_move_values()
-            move = move_obj.sudo().create(move_vals)
-            if move:
-                move.post()
-                voucher.move_id = move.id
-                voucher.state = 'posted'
-            else:
-                raise ValidationError(_('Something went wrong while creating move!!!'))
+            if voucher.state == 'draft':
+                move_vals = voucher._prepare_move_values()
+                move = move_obj.sudo().create(move_vals)
+                if move:
+                    move.post()
+                    voucher.move_id = move.id
+                    voucher.state = 'posted'
+                else:
+                    raise ValidationError(_('Something went wrong while creating move!!!'))
 
     def action_cancel(self):
         for rec in self:
@@ -145,6 +147,7 @@ class AccountVoucher(models.Model):
 class AccountVoucherLine(models.Model):
     _name = 'account.voucher.line'
     _description = 'Accounting Voucher Line'
+    _check_company_auto = True
 
     @api.onchange('account_voucher_type_id')
     def account_voucher_type_domains(self):
@@ -224,7 +227,7 @@ class AccountVoucherLine(models.Model):
 class AccountVoucherType(models.Model):
     _name = 'account.voucher.type'
     _inherit = ['mail.thread', 'mail.activity.mixin']
-
+    _check_company_auto = True
     name = fields.Char("Type", required=True)
     account_id = fields.Many2one('account.account', string='Account', index=False, ondelete="cascade",
                                  tracking=True, check_company=True)
