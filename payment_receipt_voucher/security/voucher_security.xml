@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.rule" id="account_voucher_rule">
+        <field name="name">Account Voucher multi-company</field>
+        <field name="model_id" ref="model_account_voucher_type"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+    <record model="ir.rule" id="account_voucher_type_rule">
+        <field name="name">Account Voucher Type multi-company</field>
+        <field name="model_id" ref="model_account_voucher"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+    <record model="ir.rule" id="account_voucher_line_rule">
+        <field name="name">Account Voucher Line multi-company</field>
+        <field name="model_id" ref="model_account_voucher_line"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

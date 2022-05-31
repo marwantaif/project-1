@@ -56,6 +56,8 @@
                                         <field name="account_id" optional="show" force_save="1"/>
                                         <field name="analytic_account_id" optional="show" force_save="1"/>
                                         <field name="description" optional="show" force_save="1"/>
+                                        <field name="voucher_number" optional="show" force_save="1"/>
+                                        <field name="voucher_date" optional="show" force_save="1"/>
                                         <field name="partner_type" readonly="1" optional="show" force_save="1"/>
                                         <field name="partner_id" attrs="{'readonly':[('partner_type','=',('no_partner'))],
                                                                                 'required':[('partner_type', 'in', ('customer_rank', 'supplier_rank', 'employee'))]}"
@@ -80,6 +82,17 @@
                         <field name="message_ids" widget="mail_thread"/>
                     </div>
                 </form>
+            </field>
+        </record>
+        <record model="ir.actions.server" id="action_view_account_voucher_post">
+            <field name="name">Post</field>
+            <field name="model_id" ref="payment_receipt_voucher.model_account_voucher"/>
+            <field name="binding_model_id" ref="payment_receipt_voucher.model_account_voucher"/>
+            <field name="state">code</field>
+            <field name="groups_id" eval="[(4,ref('account.group_account_user'))]"/>
+            <field name="code">
+                if records:
+                action = records.action_post()
             </field>
         </record>
         <record id="account_voucher_tree_view" model="ir.ui.view">
@@ -196,5 +209,30 @@
                   parent="menu_account_voucher"
                   groups="account.group_account_manager"
                   sequence="3"/>
+
+        <record id="account_voucher_line_view_tree" model="ir.ui.view">
+            <field name="name">account.voucher.line.view.tree</field>
+            <field name="model">account.voucher.line</field>
+            <field name="arch" type="xml">
+                <tree create="false" delete="false" edit="false" string="Accounting Voucher Line">
+                    <field name="account_voucher_id"/>
+                    <field name="voucher_type"/>
+                    <field name="company_id"/>
+                    <field name="description"/>
+                    <field name="voucher_number"/>
+                    <field name="voucher_date"/>
+                    <field name="amount"/>
+                </tree>
+            </field>
+        </record>
+        <record id="account_voucher_line_action" model="ir.actions.act_window">
+            <field name="name">Accounting Voucher Line</field>
+            <field name="res_model">account.voucher.line</field>
+            <field name="view_mode">tree,pivot</field>
+        </record>
+        <menuitem id="account_voucher_line_menu" action="account_voucher_line_action" name="Accounting Voucher Line"
+                  parent="menu_account_voucher"
+                  sequence="4"/>
+
     </data>
 </odoo>
