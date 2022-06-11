@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_project_estimated_material,project.estimated.material,model_project_estimated_material,project.group_project_user,1,0,0,0
+access_project_estimated_material_manager,project.estimated.material,model_project_estimated_material,project.group_project_manager,1,1,1,1
+access_project_consumed_material,project.consumed.material,model_project_consumed_material,project.group_project_user,1,0,0,0
+access_project_consumed_material_manager,project.consumed.material,model_project_consumed_material,project.group_project_manager,1,1,1,1

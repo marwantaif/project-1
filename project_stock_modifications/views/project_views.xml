@@ -1,0 +1,138 @@
+<odoo>
+    <data>
+        <record id="project_project_view_form" model="ir.ui.view">
+            <field name="name">project.project.form.inherit</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.edit_project"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(project.project_milestone_all)d']" position="before">
+                    <button class="oe_stat_button" name="action_stock_picking"
+                            type="object" icon="fa-truck"
+                            help="Delivery"
+                            attrs="{'invisible': [('delivered_count', '=', 0)]}">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="delivered_count"/>
+                            </span>
+                            <span class="o_stat_text">Delivery</span>
+                        </div>
+                    </button>
+                    <button name="action_account_move" attrs="{'invisible': [('account_move_count', '=', 0)]}"
+                            class="oe_stat_button"
+                            icon="fa-folder-open" type="object" help="Journal Entries">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="account_move_count"/>
+                            </span>
+                            <span class="o_stat_text">Journal Entries</span>
+                        </div>
+                    </button>
+                </xpath>
+                <xpath expr="//page[@name='settings']" position="after">
+                    <page string="Accounting"
+                          groups="account.group_account_readonly">
+                        <group name="properties" groups="account.group_account_readonly">
+                            <group>
+                                <field name="stock_account_id"
+                                       groups="account.group_account_readonly"/>
+                                <field name="product_account_id"
+                                       groups="account.group_account_readonly"/>
+                            </group>
+                            <group>
+                                <field name="project_journal_id"
+                                       groups="account.group_account_readonly"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_task_form2_inherited">
+            <field name="name">project.task.form.inherited</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[@name='extra_info']" position="after">
+                    <page string="Estimated Material" id="estimated_material_tab">
+                        <field name="estimated_material_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="product_id"/>
+                                <field name="quantity" optional="show"/>
+                                <field name="price_unit" optional="show"/>
+                                <field name="price_subtotal" optional="show"/>
+                            </tree>
+                        </field>
+                        <group class="oe_subtotal_footer oe_right">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="estimated_amount_total" force_save="1" widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                        </group>
+                        <div class="oe_clear"/>
+                    </page>
+                    <page string="Consumed Material" id="consumed_material_tab">
+                        <field name="consumed_material_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="picking_id" invisible="1"/>
+                                <field name="product_id" attrs="{'readonly': [('picking_id', '!=', False)]}"/>
+                                <field name="quantity" attrs="{'readonly': [('picking_id', '!=', False)]}"
+                                       optional="show"/>
+                                <field name="price_unit" attrs="{'readonly': [('picking_id', '!=', False)]}"
+                                       optional="show"/>
+                                <field name="picking_type_id" attrs="{'readonly': [('picking_id', '!=', False)]}"
+                                       optional="show"/>
+                                <field name="location_id" attrs="{'readonly': [('picking_id', '!=', False)]}"
+                                       optional="show"/>
+                                <field name="price_subtotal" optional="show"/>
+                            </tree>
+                        </field>
+                        <group class="oe_subtotal_footer oe_right">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="consumed_amount_total" force_save="1" widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                        </group>
+                        <div class="oe_clear"/>
+                    </page>
+                </xpath>
+                <xpath expr="//header" position='inside'>
+                    <field name="delivered_count" invisible="1"/>
+                    <field name="not_delivered_count" invisible="1"/>
+                    <button name="action_create_stock_picking" type="object"
+                            string="Transfer Material"
+                            attrs="{'invisible': [('not_delivered_count', '=', 0)]}"
+                            class="oe_highlight"/>
+                </xpath>
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button" name="action_stock_picking"
+                            type="object" icon="fa-truck"
+                            help="Delivery"
+                            attrs="{'invisible': [('delivered_count', '=', 0)]}">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="delivered_count"/>
+                            </span>
+                            <span class="o_stat_text">Delivery</span>
+                        </div>
+                    </button>
+                    <button name="action_account_move" attrs="{'invisible': [('account_move_count', '=', 0)]}"
+                            class="oe_stat_button"
+                            icon="fa-folder-open" type="object" help="Journal Entries">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="account_move_count"/>
+                            </span>
+                            <span class="o_stat_text">Journal Entries</span>
+                        </div>
+                    </button>
+
+                </xpath>
+                <field name="parent_id" position="after">
+                    <field name="picking_type_id"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
