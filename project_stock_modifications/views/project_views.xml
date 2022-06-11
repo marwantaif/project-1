@@ -72,7 +72,7 @@
                         <div class="oe_clear"/>
                     </page>
                     <page string="Consumed Material" id="consumed_material_tab">
-                        <field name="consumed_material_ids" nolabel="1">
+                        <field name="consumed_material_ids" nolabel="1" context="{'default_picking_type_id': picking_type_id}">
                             <tree editable="bottom">
                                 <field name="company_id" invisible="1"/>
                                 <field name="currency_id" invisible="1"/>

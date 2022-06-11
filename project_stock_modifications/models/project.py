@@ -78,6 +78,8 @@ class Task(models.Model):
     account_move_ids = fields.One2many('account.move', 'task_id', string='Journal Entries')
     account_move_count = fields.Integer(string='Journal Entries', compute='_compute_account_move_count')
 
+
+
     def action_create_stock_picking(self):
         location_dest_id = int(self.env['ir.config_parameter'].sudo().get_param(
             'project_stock_modifications.location_dest_id', default=False))
@@ -236,7 +238,7 @@ class ProjectConsumedMaterial(models.Model):
                 'price_subtotal': price,
             })
 
-    @api.model
+    @api.depends('project_task_id')
     def _get_default_picking_type(self):
         task_id = self.env['project.task'].search([('id', '=', self.env.context.get('params', {}).get('id'))])
         return task_id.picking_type_id
