@@ -172,7 +172,7 @@ class AccountVoucherLine(models.Model):
                 elif type_id.partner_type == 'employee':
                     employee_partners = self.env['res.partner'].search([('employee_id', '!=', False)])
                     partner_domain = [('id', 'in', list(set(employee_partners.ids)))]
-        return {'domain': {'tax_id': tax_domain, 'partner_id': partner_domain}}
+            return {'domain': {'tax_id': tax_domain, 'partner_id': partner_domain}}
 
     account_voucher_id = fields.Many2one('account.voucher', "Account Voucher")
     voucher_type = fields.Selection(related='account_voucher_id.voucher_type')
