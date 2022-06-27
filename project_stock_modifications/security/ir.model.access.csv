@@ -3,3 +3,7 @@ access_project_estimated_material,project.estimated.material,model_project_estim
 access_project_estimated_material_manager,project.estimated.material,model_project_estimated_material,project.group_project_manager,1,1,1,1
 access_project_consumed_material,project.consumed.material,model_project_consumed_material,project.group_project_user,1,0,0,0
 access_project_consumed_material_manager,project.consumed.material,model_project_consumed_material,project.group_project_manager,1,1,1,1
+access_project_service,project.service,model_project_service,project.group_project_manager,1,0,0,0
+access_project_service_manager,project.service,model_project_service,project.group_project_manager,1,1,1,1
+access_project_salary,project.salary,model_project_salary,project.group_project_manager,1,0,0,0
+access_project_salary_manager,project.salary,model_project_salary,project.group_project_manager,1,1,1,1

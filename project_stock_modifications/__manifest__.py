@@ -18,13 +18,15 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'project', 'stock', 'account'],
+    'depends': ['base', 'project', 'stock', 'account', 'payment_receipt_voucher'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
         'views/res_config_settings_views.xml',
         'views/project_views.xml',
+        'views/account_views.xml',
+        'views/voucher_views.xml',
         'views/templates.xml',
     ],
     # only loaded in demonstration mode
