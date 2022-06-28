@@ -7,13 +7,28 @@ from odoo.exceptions import UserError, ValidationError
 class Project(models.Model):
     _inherit = 'project.project'
 
+    @api.depends('salary_ids')
+    def _compute_amount(self):
+        for project in self:
+            salary_total = 0.0
+            if project.salary_ids:
+                for line in project.salary_ids:
+                    salary_total += line.salary_subtotal
+            project.update({
+                'salary_total': salary_total,
+            })
+
     picking_ids = fields.One2many('stock.picking', 'project_id', string='Transfers')
     delivered_count = fields.Integer(string='Delivered', compute='_compute_delivered_count')
     stock_account_id = fields.Many2one('account.account', string="Stock Account")
     product_account_id = fields.Many2one('account.account', string="Material Account")
     project_journal_id = fields.Many2one('account.journal', string="Project Journal")
     account_move_ids = fields.One2many('account.move', 'project_id', string='Journal Entries')
+    account_move_line_ids = fields.One2many('account.move.line', 'project_id', string='Journal Items')
     account_move_count = fields.Integer(string='Journal Entries', compute='_compute_account_move_count')
+    account_move_line_count = fields.Integer(string='Journal Items', compute='_compute_account_move_count')
+    salary_ids = fields.One2many('project.salary', 'project_id', string="Project Salary")
+    salary_total = fields.Monetary(string='Total', compute='_compute_amount', readonly=True)
 
     @api.depends('picking_ids')
     def _compute_delivered_count(self):
@@ -23,6 +38,7 @@ class Project(models.Model):
     def _compute_account_move_count(self):
         for rec in self:
             rec.account_move_count = len(rec.account_move_ids)
+            rec.account_move_line_count = len(rec.account_move_line_ids)
 
     def action_stock_picking(self):
         self.ensure_one()
@@ -44,29 +60,46 @@ class Project(models.Model):
             "name": "Account Move",
         }
 
+    def action_account_move_line(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "account.move.line",
+            "views": [[False, "tree"], [False, "form"]],
+            "domain": [['project_id', '=', self.id]],
+            "name": "Account Move Line",
+        }
+
 
 class Task(models.Model):
     _inherit = 'project.task'
 
-    @api.depends('estimated_material_ids.price_subtotal', 'consumed_material_ids.price_subtotal')
+    @api.depends('estimated_material_ids.price_subtotal', 'consumed_material_ids.price_subtotal',
+                 'service_ids.price_subtotal')
     def _amount_all(self):
         for task in self:
-            estimated_total = consumed_total = 0.0
+            estimated_total = consumed_total = service_total = 0.0
             for estimated_line in task.estimated_material_ids:
                 estimated_total += estimated_line.price_subtotal
             for consumed_line in task.consumed_material_ids:
                 consumed_total += consumed_line.price_subtotal
+            for service_line in task.service_ids:
+                service_total += service_line.price_subtotal
             task.update({
                 'estimated_amount_total': estimated_total,
                 'consumed_amount_total': consumed_total,
+                'service_amount_total': service_total,
             })
 
     estimated_material_ids = fields.One2many('project.estimated.material', 'project_task_id',
                                              string="Estimated Material")
     consumed_material_ids = fields.One2many('project.consumed.material', 'project_task_id',
                                             string="Consumed Material")
+    service_ids = fields.One2many('project.service', 'project_task_id',
+                                  string="Service")
     estimated_amount_total = fields.Monetary(string='Total', store=True, compute='_amount_all')
     consumed_amount_total = fields.Monetary(string='Total', store=True, compute='_amount_all')
+    service_amount_total = fields.Monetary(string='Total', store=True, compute='_amount_all')
     company_id = fields.Many2one('res.company', 'Company', readonly=True)
     currency_id = fields.Many2one('res.currency', 'Currency', related='company_id.currency_id', readonly=True)
     picking_ids = fields.One2many('stock.picking', 'task_id', string='Transfers')
@@ -76,9 +109,9 @@ class Task(models.Model):
                                       domain="[('code', '=', 'outgoing'), ('warehouse_id.company_id', '=', company_id)]",
                                       ondelete='restrict')
     account_move_ids = fields.One2many('account.move', 'task_id', string='Journal Entries')
+    account_move_line_ids = fields.One2many('account.move.line', 'task_id', string='Journal Items')
     account_move_count = fields.Integer(string='Journal Entries', compute='_compute_account_move_count')
-
-
+    account_move_line_count = fields.Integer(string='Journal Items', compute='_compute_account_move_count')
 
     def action_create_stock_picking(self):
         location_dest_id = int(self.env['ir.config_parameter'].sudo().get_param(
@@ -183,6 +216,7 @@ class Task(models.Model):
     def _compute_account_move_count(self):
         for rec in self:
             rec.account_move_count = len(rec.account_move_ids)
+            rec.account_move_line_count = len(rec.account_move_line_ids)
 
     def action_stock_picking(self):
         self.ensure_one()
@@ -202,6 +236,16 @@ class Task(models.Model):
             "views": [[False, "tree"], [False, "form"]],
             "domain": [['task_id', '=', self.id]],
             "name": "Account Move",
+        }
+
+    def action_account_move_line(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "account.move.line",
+            "views": [[False, "tree"], [False, "form"]],
+            "domain": [['task_id', '=', self.id]],
+            "name": "Account Move Line",
         }
 
 
@@ -264,3 +308,37 @@ class ProjectConsumedMaterial(models.Model):
         default=lambda self: self.env['stock.picking.type'].browse(
             self._context.get('default_picking_type_id')).default_location_src_id,
         check_company=True, required=True)
+
+
+class ProjectService(models.Model):
+    _name = 'project.service'
+    _description = 'Service'
+
+    @api.depends('quantity', 'price_unit')
+    def _compute_amount(self):
+        for line in self:
+            price = line.price_unit * line.quantity
+            line.update({
+                'price_subtotal': price,
+            })
+
+    product_id = fields.Many2one('product.product', string="Service", required=True,
+                                 domain="[('detailed_type', '=', 'service')]")
+    quantity = fields.Float('Quantity', required=True)
+    price_unit = fields.Monetary('Unit Price')
+    price_subtotal = fields.Monetary(string='Subtotal', compute='_compute_amount', readonly=True)
+    project_task_id = fields.Many2one('project.task', string='Task')
+    company_id = fields.Many2one('res.company', 'Company', readonly=True)
+    currency_id = fields.Many2one('res.currency', 'Currency', related='company_id.currency_id', readonly=True)
+
+
+class ProjectSalary(models.Model):
+    _name = 'project.salary'
+    _description = 'Project Salary'
+
+    date_from = fields.Date(string="From", required=True)
+    date_to = fields.Date(string="To", required=True)
+    salary_subtotal = fields.Monetary(string='Subtotal', required=True)
+    project_id = fields.Many2one('project.project', string='Project')
+    company_id = fields.Many2one('res.company', 'Company', readonly=True)
+    currency_id = fields.Many2one('res.currency', 'Currency', related='company_id.currency_id', readonly=True)

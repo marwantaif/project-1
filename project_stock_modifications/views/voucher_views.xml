@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+    <data>
+        <record id="account_voucher_form_inherit_view" model="ir.ui.view">
+            <field name="name">account.voucher.form.inherit</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="payment_receipt_voucher.account_voucher_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='voucher_line_ids']/tree/field[@name='analytic_account_id']" position="after">
+                    <field name="project_id" options="{'no_create': True, 'no_edit': True}" optional="show" force_save="1"/>
+                    <field name="task_id" options="{'no_create': True, 'no_edit': True}" optional="show" force_save="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
