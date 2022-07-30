@@ -55,8 +55,15 @@ class AccountVoucher(models.Model):
 
     @api.model
     def create(self, vals):
-        vals['name'] = "AVCHR/%s/%s" % (dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
-                                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.code'))
+        if vals['voucher_type']:
+            if vals['voucher_type'] == 'in':
+                vals['name'] = "AVCHR/%s/%s" % (
+                    dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                    , self.env['ir.sequence'].sudo().next_by_code('account.voucher.receipt'))
+            if vals['voucher_type'] == 'out':
+                vals['name'] = "AVCHR/%s/%s" % (
+                    dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                    , self.env['ir.sequence'].sudo().next_by_code('account.voucher.payment'))
         val = super(AccountVoucher, self).create(vals)
         return val
 
