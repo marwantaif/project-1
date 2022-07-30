@@ -55,8 +55,15 @@ class AccountVoucher(models.Model):
 
     @api.model
     def create(self, vals):
-        vals['name'] = "AVCHR/%s/%s" % (dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
-                                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.code'))
+        if vals['voucher_type']:
+            if vals['voucher_type'] == 'in':
+                vals['name'] = "AVCHR/%s/%s" % (
+                    dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                    , self.env['ir.sequence'].sudo().next_by_code('account.voucher.receipt'))
+            if vals['voucher_type'] == 'out':
+                vals['name'] = "AVCHR/%s/%s" % (
+                    dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                    , self.env['ir.sequence'].sudo().next_by_code('account.voucher.payment'))
         val = super(AccountVoucher, self).create(vals)
         return val
 
@@ -172,7 +179,7 @@ class AccountVoucherLine(models.Model):
                 elif type_id.partner_type == 'employee':
                     employee_partners = self.env['res.partner'].search([('employee_id', '!=', False)])
                     partner_domain = [('id', 'in', list(set(employee_partners.ids)))]
-        return {'domain': {'tax_id': tax_domain, 'partner_id': partner_domain}}
+            return {'domain': {'tax_id': tax_domain, 'partner_id': partner_domain}}
 
     account_voucher_id = fields.Many2one('account.voucher', "Account Voucher")
     voucher_type = fields.Selection(related='account_voucher_id.voucher_type')
