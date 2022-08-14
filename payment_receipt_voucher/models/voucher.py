@@ -25,6 +25,10 @@ class AccountVoucher(models.Model):
     name = fields.Char("Accounting Voucher")
     voucher_type = fields.Selection([('in', 'Receipt'), ('out', 'Payment')], "Voucher Type", required=True,
                                     tracking=True)
+    voucher_category = fields.Selection(
+        [('cash', 'Cash'), ('check', 'Check'), ('transfer', 'Transfer'), ('mada', 'Mada & Visa'), ('other', 'Other')],
+        "Voucher Category", required=True,
+        tracking=True)
     company_id = fields.Many2one('res.company', readonly=True, default=lambda self: self.env.company)
     currency_id = fields.Many2one('res.currency', 'Currency', readonly=True, states={'draft': [('readonly', False)]},
                                   required=True, tracking=True,
@@ -57,13 +61,48 @@ class AccountVoucher(models.Model):
     def create(self, vals):
         if vals['voucher_type']:
             if vals['voucher_type'] == 'in':
-                vals['name'] = "AVCHR/%s/%s" % (
-                    dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
-                    , self.env['ir.sequence'].sudo().next_by_code('account.voucher.receipt'))
+                if vals['voucher_category'] == 'cash':
+                    vals['name'] = "%s/Cash/%s" % (
+                        dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.receipt.cash'))
+                elif vals['voucher_category'] == 'check':
+                    vals['name'] = "%s/Check/%s" % (
+                        dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.receipt.check'))
+                elif vals['voucher_category'] == 'transfer':
+                    vals['name'] = "%s/Transfer/%s" % (
+                        dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.receipt.transfer'))
+                elif vals['voucher_category'] == 'mada':
+                    vals['name'] = "%s/Mada&Visa/%s" % (
+                        dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.receipt.mada'))
+                else:
+                    vals['name'] = "%s/Other/%s" % (
+                        dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.receipt.other'))
             if vals['voucher_type'] == 'out':
-                vals['name'] = "AVCHR/%s/%s" % (
-                    dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
-                    , self.env['ir.sequence'].sudo().next_by_code('account.voucher.payment'))
+                if vals['voucher_category'] == 'cash':
+                    vals['name'] = "%s/Cash/%s" % (
+                        dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.payment.cash'))
+                elif vals['voucher_category'] == 'check':
+                    vals['name'] = "%s/Check/%s" % (
+                        dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.payment.check'))
+                elif vals['voucher_category'] == 'transfer':
+                    vals['name'] = "%s/Transfer/%s" % (
+                        dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.payment.transfer'))
+                elif vals['voucher_category'] == 'mada':
+                    vals['name'] = "%s/Mada&Visa/%s" % (
+                        dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.payment.mada'))
+                else:
+                    vals['name'] = "%s/Other/%s" % (
+                        dict(self._fields['voucher_type'].selection).get(vals.get('voucher_type'))
+                        , self.env['ir.sequence'].sudo().next_by_code('account.voucher.payment.other'))
+
         val = super(AccountVoucher, self).create(vals)
         return val
 

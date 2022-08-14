@@ -31,6 +31,7 @@
                         <group>
                             <group>
                                 <!--                                <field name="active" invisible="1"/>-->
+                                <field name="voucher_category"/>
                                 <field name="journal_id" options="{'no_create': True, 'no_quick_create': True}"/>
                                 <field name="account_id" options="{'no_create': True, 'no_quick_create': True}"/>
                                 <field name="tax_id" options="{'no_create': True, 'no_quick_create': True}"/>

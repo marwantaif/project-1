@@ -1,17 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data noupdate="1">
-        <record id="sequence_account_voucher_receipt" model="ir.sequence">
-            <field name="name">Account Voucher</field>
-            <field name="code">account.voucher.receipt</field>
+<!--        Receipt-->
+        <record id="sequence_account_voucher_receipt_cash" model="ir.sequence">
+            <field name="name">Account Receipt Voucher Cash</field>
+            <field name="code">account.voucher.receipt.cash</field>
             <field eval="4" name="padding"/>
             <field name="number_increment">1</field>
             <field name="number_next">1</field>
             <field name="company_id" eval="True"/>
         </record>
-        <record id="sequence_account_voucher_payment" model="ir.sequence">
-            <field name="name">Account Voucher</field>
-            <field name="code">account.voucher.payment</field>
+        <record id="sequence_account_voucher_receipt_check" model="ir.sequence">
+            <field name="name">Account Receipt Voucher Check</field>
+            <field name="code">account.voucher.receipt.check</field>
+            <field eval="4" name="padding"/>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="company_id" eval="True"/>
+        </record>
+        <record id="sequence_account_voucher_receipt_transfer" model="ir.sequence">
+            <field name="name">Account Receipt Voucher Transfer</field>
+            <field name="code">account.voucher.receipt.transfer</field>
+            <field eval="4" name="padding"/>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="company_id" eval="True"/>
+        </record>
+        <record id="sequence_account_voucher_receipt_mada" model="ir.sequence">
+            <field name="name">Account Receipt Voucher Mada</field>
+            <field name="code">account.voucher.receipt.mada</field>
+            <field eval="4" name="padding"/>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="company_id" eval="True"/>
+        </record>
+        <record id="sequence_account_voucher_receipt_other" model="ir.sequence">
+            <field name="name">Account Receipt Voucher Other</field>
+            <field name="code">account.voucher.receipt.other</field>
+            <field eval="4" name="padding"/>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="company_id" eval="True"/>
+        </record>
+<!--        Payment-->
+        <record id="sequence_account_voucher_payment_cash" model="ir.sequence">
+            <field name="name">Account Payment Voucher Cash </field>
+            <field name="code">account.voucher.payment.cash</field>
+            <field eval="4" name="padding"/>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="company_id" eval="True"/>
+            <field name="company_id" eval="True"/>
+        </record>
+        <record id="sequence_account_voucher_payment_check" model="ir.sequence">
+            <field name="name">Account Payment Voucher Check </field>
+            <field name="code">account.voucher.payment.check</field>
+            <field eval="4" name="padding"/>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="company_id" eval="True"/>
+            <field name="company_id" eval="True"/>
+        </record>
+        <record id="sequence_account_voucher_payment_transfer" model="ir.sequence">
+            <field name="name">Account Payment Voucher Transfer </field>
+            <field name="code">account.voucher.payment.transfer</field>
+            <field eval="4" name="padding"/>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="company_id" eval="True"/>
+            <field name="company_id" eval="True"/>
+        </record>
+        <record id="sequence_account_voucher_payment_mada" model="ir.sequence">
+            <field name="name">Account Payment Voucher Mada </field>
+            <field name="code">account.voucher.payment.mada</field>
+            <field eval="4" name="padding"/>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="company_id" eval="True"/>
+            <field name="company_id" eval="True"/>
+        </record>
+        <record id="sequence_account_voucher_payment_other" model="ir.sequence">
+            <field name="name">Account Payment Voucher Other </field>
+            <field name="code">account.voucher.payment.other</field>
             <field eval="4" name="padding"/>
             <field name="number_increment">1</field>
             <field name="number_next">1</field>
