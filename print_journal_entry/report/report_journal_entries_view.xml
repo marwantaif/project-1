@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+	<data>
+
+		<template id="external_layout_custom">
+			<t t-if="o and 'company_id' in o">
+        	<t t-set="company" t-value="o.company_id"/>
+			</t>
+			<t t-if="not o or not 'company_id' in o">
+				<t t-set="company" t-value="res_company"/>
+			</t>
+
+        <div class="article o_report_layout_standard">
+            <t t-raw="0" />
+        </div>
+        <div class="footer o_background_footer">
+            <div class="text-center" style="font-size:14px;"  >
+                <ul class="list-inline">
+                    <li t-if="company.phone" class="list-inline-item"><i  role="img" aria-label="Phone" title="Phone"/> <span t-field="company.phone"/></li>
+                    <li t-if="company.email" class="list-inline-item"><i class="fa fa-at" role="img" aria-label="Email" title="Email"/> <span t-field="company.email"/></li>
+                    <li t-if="company.website" class="list-inline-item"><i class="fa fa-globe" role="img" aria-label="Website" title="Website"/> <span t-field="company.website"/></li>
+                    <li t-if="company.vat" class="list-inline-item"><t t-esc="(company.country_id.vat_label or 'Tax ID').replace(' ','\N{NO-BREAK SPACE}')"/>: <span t-esc="company.vat.replace(' ','\N{NO-BREAK SPACE}')"/></li>
+                </ul>
+                <div t-field="company.report_footer"/>
+                <div t-if="report_type == 'pdf'" class="text-muted">
+                    Page:
+                    <span class="page"/>
+                    of
+                    <span class="topage"/>
+                </div>
+            </div>
+        </div>
+	    </template>
+
+		<template id="journal_entry_template_report_view">
+			<t t-call="print_journal_entry.external_layout_custom">
+				<t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+
+				<div class="page">
+					<style>
+					th,td{
+					 height:2px;
+						border:2px solid #080808;
+						text-align:center;
+					}
+						.parent div{
+						   width:20%;
+						display:inline;
+						}
+						.Row {
+    display: table;
+    width: 100%; /*Optional*/
+    table-layout: fixed; /*Optional*/
+    border-spacing: 10px; /*Optional*/
+}
+.Column {
+    display: table-cell;
+}
+				</style>
+
+					<div class="Row" style="border:2px solid #080808;border-radius: 30px;" dir="rtl">
+						<div class="Column" align="right">
+							<strong style="text-align:center">
+								 <span t-esc="o.company_id.company_arabic"/>
+							</strong>
+							<br/>
+							<strong style="text-align:center">
+								الرقم الضريبي :  <span t-esc="o.company_id.vat"/>
+							</strong>
+							<br/>
+							<strong style="text-align:center">
+								<span t-esc="o.company_id.address_arabic"/>
+							</strong>
+							<br/>
+							<strong style="text-align:center">
+								<span t-esc="o.company_id.phone"/>
+							</strong>
+						</div>
+						<div class="Column" align="center">
+							<img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="height: 50px;width: 50; margin-top:-10px; margin-bottom:-10px; text-align:center; " alt="Logo"/>
+
+							<br/><br/>
+							<div style="text-align:center; border-radius: 10px;
+										background-color:#82afed;width:40%;height:50px;">
+								<h3>
+									<t t-if="o.user_id.lang == 'ar_001'">
+											<span>  قيد اليومية  </span>
+										</t>
+										<t t-if="o.user_id.lang == 'en_US'">
+											<span>Journal Entry</span>
+										</t>
+									</h3>
+							</div>
+							<br/>
+						</div>
+						<div class="Column" align="left">
+								<strong style="text-align:center">
+									 <span t-esc="o.company_id.name"/>
+								</strong>
+								<br/>
+								<strong style="text-align:center">
+									Vat :  <span t-esc="o.company_id.vat"/>
+								</strong>
+								<br/>
+								<strong style="text-align:center">
+									<span t-esc="o.company_id.street"/>
+								</strong>
+								<br/>
+								<strong style="text-align:center">
+									<span t-esc="o.company_id.phone"/>
+								</strong>
+							</div>
+					</div>
+
+<!--                 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>-->
+				<div style="display:inline-block;width:100%;" align="right">
+					<div  style="display:inline-block;width:20%">
+						<span style="display:inline-block;">
+							<span style="display:inline-block;"><p t-field="o.ref"/></span> / <span style="display:inline-block;">
+							    <t t-if="o.user_id.lang == 'ar_001'">
+									<span>رقم المرجع</span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span>Reference Number</span>
+								</t>
+							 </span>
+						</span>
+					</div>
+					<div  style="display:inline-block;width:20%">
+						<span style="display:inline-block;">
+							<span style="display:inline-block;"><p t-field="o.date"/></span> / <span style="display:inline-block;">
+						       <t t-if="o.user_id.lang == 'ar_001'">
+									<span>  تاريخ السند </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span>Bond Date</span>
+								</t>
+						</span>
+						</span>
+					</div>
+					<div  style="display:inline-block;width:20%">
+						<span style="display:inline-block;">
+							<span style="display:inline-block;"><p t-field="o.name"/></span> / <span style="display:inline-block;">
+						         <t t-if="o.user_id.lang == 'ar_001'">
+									<span>  رقم القيد </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span>Entry Number</span>
+								</t>
+						</span>
+						</span>
+					</div>
+					<div  style="display:inline-block;width:20%">
+						<span>
+						    <t t-if="o.user_id.lang == 'ar_001'">
+									<span>  نوع الوثيقة / قيد يومية </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span>Document type / journal entry</span>
+								</t>
+						</span>
+					</div>
+				</div>
+
+				<div style="display:inline-block;width:100%;" align="right">
+					<div  style="display:inline-block;width:20%">
+						<span style="display:inline-block;">
+							<span style="display:inline-block;"> </span> / <span style="display:inline-block;">
+							   <t t-if="o.user_id.lang == 'ar_001'">
+									<span>  المستلم </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span>Receiver</span>
+								</t>
+							 </span>
+						</span>
+					</div>
+					<div  style="display:inline-block;width:20%">
+						<span style="display:inline-block;">
+							<span style="display:inline-block;"> </span> / <span style="display:inline-block;">
+						           <t t-if="o.user_id.lang == 'ar_001'">
+									<span>  المستفيد </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span>Beneficiary</span>
+								</t>
+						</span>
+						</span>
+					</div>
+					<div  style="display:inline-block;width:20%">
+						<span style="display:inline-block;">
+							<span style="display:inline-block;"> </span> / <span style="display:inline-block;">
+						          <t t-if="o.user_id.lang == 'ar_001'">
+									<span>  البيان </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span>Statement</span>
+								</t>
+						</span>
+						</span>
+					</div>
+
+				</div>
+
+				<br/>
+
+				<table style="width:100%;margin:0px auto;background:white;border:2px solid #080808;" dir="ltr" >
+					<thead style="border:2px solid #080808;height:20px;">
+						<tr style="line-height: 40px;border:2px solid #080808;background-color:#82afed;text-align:center;">
+							<th rowspan="2">
+								<t t-if="o.user_id.lang == 'ar_001'">
+									<span>  رقم المركز </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span>Center number</span>
+								</t>
+								</th>
+							<th>
+							   <t t-if="o.user_id.lang == 'ar_001'">
+									<span>  العملة الاجنبية </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span>Foreign currency</span>
+								</t>
+							</th>
+							<th colspan="2">
+								<t t-if="o.user_id.lang == 'ar_001'">
+									<span>  العملة المحلية </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span>Local Currency</span>
+								</t>
+								</th>
+							<th>
+								<t t-if="o.user_id.lang == 'ar_001'">
+									<span> البيان </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span>Statement </span>
+								</t>
+								</th>
+							<th>
+								<t t-if="o.user_id.lang == 'ar_001'">
+									<span>  العملة  </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span> Currency</span>
+								</t>
+							</th>
+							<th>
+							    <t t-if="o.user_id.lang == 'ar_001'">
+									<span>  الحساب التحليلي  </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span> Analytic Account </span>
+								</t>
+							</th>
+							<th>
+								<t t-if="o.user_id.lang == 'ar_001'">
+									<span>  أسم الحساب  </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span> Account Name</span>
+								</t>
+							</th>
+
+							<th>
+								<t t-if="o.user_id.lang == 'ar_001'">
+									<span>  رقم الحساب  </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span> Account No.</span>
+								</t>
+							</th>
+						</tr>
+					</thead>
+					<thead style="height:20px;">
+						<tr style="line-height: 20px;background-color:#82afed;">
+							<th ></th>
+							<th> </th>
+							<th>
+							   <t t-if="o.user_id.lang == 'ar_001'">
+									<span>  المدين  </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span> Debit </span>
+								</t>
+							</th>
+							<th>
+							   <t t-if="o.user_id.lang == 'ar_001'">
+									<span>  الدائن  </span>
+								</t>
+								<t t-if="o.user_id.lang == 'en_US'">
+									<span> Credit </span>
+								</t>
+							</th>
+							<th></th>
+							<th></th>
+							<th> </th>
+							<th> </th>
+							<th> </th>
+						</tr>
+					</thead>
+					<tbody class="consumed_tbody" style="border:2px solid #080808;">
+						<t t-set="total" t-value="0.0"/>
+						<t t-set="total1" t-value="0.0"/>
+						<t t-set="total2" t-value="0.0"/>
+						<t t-foreach="o.line_ids" t-as="line">
+						<tr style="border:2px solid #080808;">
+							<td>
+								<span t-field="line.analytic_account_id" />
+							</td>
+							<td>
+								<t t-if="line.company_currency_id != line.currency_id">
+								    <span t-field="line.amount_currency" />
+								</t>
+							</td>
+							<td>
+								<span t-field="line.debit" />
+							</td>
+							<td>
+								<span t-field="line.credit" />
+							</td>
+							<td>
+								<span t-field="line.name" />
+							</td>
+							<td>
+								<span t-field="line.currency_id.name" />
+							</td>
+							<td>
+								<span t-field="line.partner_id.name" />
+							</td>
+							<td>
+								<span t-field="line.account_id.name" />
+							</td>
+
+							<td>
+								<span t-field="line.account_id.code" />
+							</td>
+						</tr>
+						<t t-set="total" t-value="total + line.debit"/>
+						<t t-set="total1" t-value="total1 + line.credit"/>
+						<t t-set="total2" t-value="total2 + line.amount_currency"/>
+						</t>
+						<tr>
+
+							<td><strong>Total:</strong></td>
+							<td width="10%">
+								<strong>
+								     <span style="color:red;font-weight: 600;"><t t-esc="round(total2,2)"/></span>
+							     </strong>
+							</td>
+							<td width="10%">
+								<strong>
+								     <span style="color:red;font-weight: 600;"><t t-esc="round(total,2)"/></span>
+							     </strong>
+							</td>
+							 <td width="10%">
+								 <strong>
+								    <span style="color:red;font-weight: 600;"><t t-esc="round(total1,2)"/></span>
+							     </strong>
+							 </td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+					  </tr>
+					</tbody>
+				</table>
+
+				</div>
+			</t>
+		</template>
+
+		<template id="journal_entry_report_template_id">
+			<t t-call="web.html_container">
+				<t t-foreach="docs" t-as="o">
+					<t t-call="print_journal_entry.journal_entry_template_report_view"  t-lang="o.partner_id.lang"/>
+				</t>
+			</t>
+		</template>
+
+	</data>
+</odoo>
